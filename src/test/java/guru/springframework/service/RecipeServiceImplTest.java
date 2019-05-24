@@ -1,5 +1,8 @@
 package guru.springframework.service;
 
+
+import guru.springframework.converters.RecipeCommandToRecipe;
+import guru.springframework.converters.RecipeToRecipeCommand;
 import guru.springframework.domain.Recipe;
 import guru.springframework.repository.RecipeRepository;
 import org.junit.Before;
@@ -15,6 +18,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
+/**
+ * Created by jt on 6/17/17.
+ */
 public class RecipeServiceImplTest {
 
     RecipeServiceImpl recipeService;
@@ -22,26 +28,17 @@ public class RecipeServiceImplTest {
     @Mock
     RecipeRepository recipeRepository;
 
+    @Mock
+    RecipeToRecipeCommand recipeToRecipeCommand;
+
+    @Mock
+    RecipeCommandToRecipe recipeCommandToRecipe;
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        recipeService = new RecipeServiceImpl(recipeRepository);
-    }
-
-    @Test
-    public void getRecipes() {
-        Recipe recipe = new Recipe();
-        HashSet recipesData = new HashSet();
-        recipesData.add(recipe);
-
-        when(recipeRepository.findAll()).thenReturn(recipesData);
-
-        Set<Recipe> recipes = recipeService.getRecipes();
-
-        assertEquals(recipes.size(), 1);
-
-        verify(recipeRepository, times(1)).findAll();
+        recipeService = new RecipeServiceImpl(recipeRepository, recipeCommandToRecipe, recipeToRecipeCommand);
     }
 
     @Test
@@ -74,8 +71,5 @@ public class RecipeServiceImplTest {
         verify(recipeRepository, times(1)).findAll();
         verify(recipeRepository, never()).findById(anyLong());
     }
-
-
-
 
 }
